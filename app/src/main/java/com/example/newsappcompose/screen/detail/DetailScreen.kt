@@ -1,5 +1,6 @@
 package com.example.newsappcompose.screen.detail
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +37,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil3.compose.AsyncImage
+import com.example.newsappcompose.Article
 import com.example.newsappcompose.R
 import com.example.newsappcompose.ui.theme.Jennifer
 import com.example.newsappcompose.ui.theme.News
@@ -43,30 +47,30 @@ import com.example.newsappcompose.ui.theme.NewsAppComposeTheme
 import com.example.newsappcompose.ui.theme.White
 
 @Composable
-fun DetailScreen() {
+fun DetailScreen(
+    article: Article,
+    viewModel: DetailViewModel = hiltViewModel()
+) {
     val drop = remember {
         mutableStateOf(false)
-
     }
-
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.25f)
+                .fillMaxHeight(0.35f)
+                .background(Color.Red)
         ) {
-
-            Image(
-                painter = painterResource(id = R.drawable.test1), contentDescription = null,
-
-
-                contentScale = ContentScale.FillBounds, modifier = Modifier.fillMaxSize()
+            AsyncImage(
+                model = article.urlToImage,
+                contentDescription = null,
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier.fillMaxWidth()
             )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-
                 Box(
                     Modifier
                         .padding(start = 15.dp, top = 20.dp)
@@ -86,12 +90,9 @@ fun DetailScreen() {
                         Modifier
                             .padding(top = 5.dp, start = 10.dp)
                             .size(20.dp)
-
-
                     )
-
                     Text(
-                        text = "Factbox: Who isisisibhh",
+                        text = article.author,
                         fontSize = 10.sp,
                         modifier = Modifier.padding(start = 35.dp, top = 7.dp, end = 8.dp),
                         maxLines = 1,
@@ -99,41 +100,48 @@ fun DetailScreen() {
                         fontWeight = FontWeight.W600,
                         color = Color.Black
                     )
-
-
                 }
                 Column {
-                    Image(painter = painterResource(id = R.drawable.group), contentDescription = null,
+                    Image(painter = painterResource(id = R.drawable.group),
+                        contentDescription = null,
                         Modifier
                             .padding(end = 22.dp, top = 17.dp)
                             .size(35.dp)
                             .clickable { drop.value = true })
 
-
-
-
                     DropdownMenu(
                         expanded = drop.value, onDismissRequest = { drop.value = false },
                         properties = PopupProperties(clippingEnabled = true)
                     ) {
-                        Row  {
+                        Row {
                             Image(
                                 painter = painterResource(id = R.drawable.save),
                                 contentDescription = null,
                                 Modifier
                                     .padding(start = 21.dp, top = 5.dp, bottom = 12.dp)
                                     .size(25.dp)
+                                    .clickable {
+                                        viewModel.addSaved(article)
+                                    }
                             )
-                            Text(text = "Save          ", modifier = Modifier.padding(start = 35.dp, top = 5.dp),
-                                fontSize = 16.sp, fontWeight = FontWeight.W500)
+                            Text(
+                                text = "Save          ",
+                                modifier = Modifier.padding(start = 35.dp, top = 5.dp),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.W500
+                            )
                         }
 
 
                         Divider(color = Color.Black)
 
                         DropdownMenuItem(
-                            text = { Text(text = "Share", modifier = Modifier.padding(start = 27.dp),
-                                fontSize = 16.sp, fontWeight = FontWeight.W500) },
+                            text = {
+                                Text(
+                                    text = "Share", modifier = Modifier.padding(start = 27.dp),
+                                    fontSize = 16.sp, fontWeight = FontWeight.W500
+                                )
+                            },
                             onClick = { /*TODO*/ },
                             leadingIcon = {
                                 Image(
@@ -167,7 +175,9 @@ fun DetailScreen() {
                         .clip(RoundedCornerShape(size = 32.dp))
                 ) {
                     Text(
-                        text = "Finance", fontSize = 10.sp, fontWeight = FontWeight.W500,
+                        text = article.source.name.toString(),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.W500,
                         modifier = Modifier.padding(
                             start = 22.dp,
                             end = 22.dp,
@@ -179,7 +189,7 @@ fun DetailScreen() {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Factbox: Who is still buying Russian crude oil?",
+                    text = article.title,
                     modifier = Modifier.padding(start = 37.dp, end = 34.dp),
                     fontSize = 26.sp, fontWeight = FontWeight.W700
                 )
@@ -187,7 +197,7 @@ fun DetailScreen() {
                 Row(Modifier.fillMaxWidth()) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = "Jennifer Wars", fontSize = 12.sp, fontWeight = FontWeight.W700,
+                            text = article.author, fontSize = 12.sp, fontWeight = FontWeight.W700,
                             color = Jennifer, modifier = Modifier
                                 .align(
                                     Alignment.TopEnd
@@ -199,14 +209,14 @@ fun DetailScreen() {
                 }
                 Spacer(modifier = Modifier.height(11.dp))
                 Text(
-                    text = "Australia, Britain, Canada and the United States have imposed outright bans on Russian oil purchases following Moscow's invasion of Ukraine, but members of the European Union are split.",
+                    text = article.content,
                     Modifier.padding(start = 37.dp, end = 34.dp),
                     fontWeight = FontWeight.W700,
                     fontSize = 15.sp, maxLines = 5, overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "(Reuters) - Australia, Britain, Canada and the United States have imposed outright bans on Russian oil purchases following Moscow's invasion of Ukraine, but members of the European Union are split.EU foreign ministers failed to agree on Monday on sanctioning Russian gas and oil supplies, which account for 40% and 27% of the bloc's total use of those commodities respectively.Germany, the EU's top user of Russian crude oil and the Netherlands, a key trading hub, argue that the EU couldn't cut its dependence on Russian supplies overnight.",
+                    text = article.description,
                     Modifier.padding(start = 33.dp, end = 34.dp),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.W500, maxLines = 9, overflow = TextOverflow.Ellipsis
@@ -222,8 +232,7 @@ fun DetailScreen() {
                                 .align(
                                     Alignment.TopEnd
                                 )
-                                .padding(end = 33.dp)
-                                ,
+                                .padding(end = 33.dp),
                             color = Jennifer
                         )
                     }
@@ -241,12 +250,5 @@ fun DetailScreen() {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun DetailPreview() {
-    NewsAppComposeTheme {
-        DetailScreen()
-    }
-}
 
 

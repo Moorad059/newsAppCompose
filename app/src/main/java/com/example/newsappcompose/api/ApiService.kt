@@ -14,7 +14,8 @@ interface ApiService {
     suspend fun getTopNews(
         @Query("country") country: String = "us",
         @Query("apiKey") apiKey: String = API_KEY,
-        ): Response<NewsResponse>
+        @Query("q") query: String
+    ): Response<NewsResponse>
 
 
 }

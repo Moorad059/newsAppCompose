@@ -1,9 +1,15 @@
 package com.example.newsappcompose
 
 
+import android.os.Parcelable
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "articles")
 data class Article(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @SerializedName("author")
     val author: String,
     @SerializedName("content")
@@ -13,7 +19,7 @@ data class Article(
     @SerializedName("publishedAt")
     val publishedAt: String,
     @SerializedName("source")
-    val source: Source,
+    @Embedded val source: Source,
     @SerializedName("title")
     val title: String,
     @SerializedName("url")

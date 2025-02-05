@@ -1,6 +1,7 @@
 package com.example.newsappcompose.screen.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,15 +31,28 @@ import com.example.newsappcompose.ui.theme.News
 import com.example.newsappcompose.ui.theme.White
 
 @Composable
-fun HomeCardColumn(model:Article) {
+fun HomeCardColumn(model: Article, onClick: (Article) -> Unit) {
 
-    Card(modifier = Modifier.background(Color.White).padding(start = 27.dp, end = 20.dp, bottom = 33.dp)) {
-        Row (Modifier.background(White)){
+    Card(
+        modifier = Modifier
+            .background(Color.White)
+            .padding(start = 27.dp, end = 20.dp, bottom = 33.dp)
+            .clickable {
+                onClick.invoke(model)
+            }
+    ) {
+        Row(Modifier.background(White)) {
             Column(modifier = Modifier.weight(0.7f)) {
-                Box(modifier = Modifier.background(News).clip(RoundedCornerShape(32.dp)).background(
-                    White), contentAlignment = Alignment.Center) {
+                Box(
+                    modifier = Modifier
+                        .background(News)
+                        .clip(RoundedCornerShape(32.dp))
+                        .background(
+                            White
+                        ), contentAlignment = Alignment.Center
+                ) {
                     Text(
-                        text ="Finance" , fontSize = 10.sp, fontWeight = FontWeight.W500,
+                        text = "Finance", fontSize = 10.sp, fontWeight = FontWeight.W500,
                         modifier = Modifier.padding(
                             start = 19.dp,
                             end = 19.dp,
@@ -53,7 +67,7 @@ fun HomeCardColumn(model:Article) {
                     fontWeight = FontWeight.W700, maxLines = 2, overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp, modifier = Modifier.padding(start = 2.dp)
 
-                    )
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -79,12 +93,14 @@ fun HomeCardColumn(model:Article) {
             AsyncImage(
                 model = model.urlToImage,
                 contentDescription = "",
-                Modifier.padding(start = 3.dp).clip(RoundedCornerShape(18.dp))
-                    .height(80.dp).weight(0.3f), contentScale = ContentScale.FillBounds
+                Modifier
+                    .padding(start = 3.dp)
+                    .clip(RoundedCornerShape(18.dp))
+                    .height(80.dp)
+                    .weight(0.3f), contentScale = ContentScale.FillBounds
             )
 
         }
-
 
 
     }
