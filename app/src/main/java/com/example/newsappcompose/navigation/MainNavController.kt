@@ -41,7 +41,7 @@ fun MainNavController() {
             }
 
             composable(route = BottomScree.Saved.route) {
-                SavedScreen()
+                SavedScreen(navController = navController)
             }
 
             composable(route = Screen.Detail.route) { backStackEntry ->

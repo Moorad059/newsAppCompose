@@ -9,11 +9,10 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "articles")
 data class Article(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @SerializedName("author")
     val author: String,
     @SerializedName("content")
-    val content: String,
+    val content: String?,
     @SerializedName("description")
     val description: String,
     @SerializedName("publishedAt")
@@ -23,7 +22,9 @@ data class Article(
     @SerializedName("title")
     val title: String,
     @SerializedName("url")
+    @PrimaryKey
     val url: String,
     @SerializedName("urlToImage")
-    val urlToImage: String
+    val urlToImage: String,
+    val isSaved: Boolean = false,
 )

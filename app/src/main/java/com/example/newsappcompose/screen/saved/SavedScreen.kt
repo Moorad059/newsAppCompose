@@ -22,13 +22,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.newsappcompose.R
+import com.example.newsappcompose.navigation.Screen
 import com.example.newsappcompose.screen.home.HomeCardColumn
 import com.example.newsappcompose.ui.theme.Date
 import com.example.newsappcompose.ui.theme.NewsAppComposeTheme
 
 @Composable
 fun SavedScreen(
+    navController: NavController,
     viewModel: SavedViewModel = hiltViewModel()
 ) {
 
@@ -61,7 +64,7 @@ fun SavedScreen(
         LazyColumn {
             items(uiState.value.newsList) {
                 HomeCardColumn(it) {
-
+                    navController.navigate(Screen.Detail.createRoute(it))
                 }
             }
 
@@ -69,12 +72,4 @@ fun SavedScreen(
     }
 
 
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeCardPreview() {
-    NewsAppComposeTheme {
-        SavedScreen()
-    }
 }

@@ -10,7 +10,7 @@ import com.example.newsappcompose.Article
 @Dao
 interface ArticleDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertArticle(article: Article)
 
     @Delete

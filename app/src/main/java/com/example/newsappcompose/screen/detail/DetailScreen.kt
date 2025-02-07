@@ -23,6 +23,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.example.newsappcompose.Article
 import com.example.newsappcompose.R
@@ -51,9 +54,17 @@ fun DetailScreen(
     article: Article,
     viewModel: DetailViewModel = hiltViewModel()
 ) {
+
+    val uiState = viewModel.detailUiState.collectAsStateWithLifecycle()
+
     val drop = remember {
         mutableStateOf(false)
     }
+
+    LaunchedEffect(Unit) {
+        viewModel.getDetail(article)
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
@@ -62,7 +73,7 @@ fun DetailScreen(
                 .background(Color.Red)
         ) {
             AsyncImage(
-                model = article.urlToImage,
+                model = uiState.value.article?.urlToImage,
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier.fillMaxWidth()
@@ -92,7 +103,7 @@ fun DetailScreen(
                             .size(20.dp)
                     )
                     Text(
-                        text = article.author,
+                        text = uiState.value.article?.author.orEmpty(),
                         fontSize = 10.sp,
                         modifier = Modifier.padding(start = 35.dp, top = 7.dp, end = 8.dp),
                         maxLines = 1,
@@ -115,7 +126,7 @@ fun DetailScreen(
                     ) {
                         Row {
                             Image(
-                                painter = painterResource(id = R.drawable.save),
+                                painter = painterResource(id = if (uiState.value.article?.isSaved == true) R.drawable.bookmark else R.drawable.save),
                                 contentDescription = null,
                                 Modifier
                                     .padding(start = 21.dp, top = 5.dp, bottom = 12.dp)
@@ -125,13 +136,12 @@ fun DetailScreen(
                                     }
                             )
                             Text(
-                                text = "Save          ",
+                                text = "Save",
                                 modifier = Modifier.padding(start = 35.dp, top = 5.dp),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.W500
                             )
                         }
-
 
                         Divider(color = Color.Black)
 
@@ -175,7 +185,7 @@ fun DetailScreen(
                         .clip(RoundedCornerShape(size = 32.dp))
                 ) {
                     Text(
-                        text = article.source.name.toString(),
+                        text = uiState.value.article?.source?.name.orEmpty(),
                         fontSize = 10.sp,
                         fontWeight = FontWeight.W500,
                         modifier = Modifier.padding(
@@ -189,7 +199,7 @@ fun DetailScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = article.title,
+                    text = uiState.value.article?.title.orEmpty(),
                     modifier = Modifier.padding(start = 37.dp, end = 34.dp),
                     fontSize = 26.sp, fontWeight = FontWeight.W700
                 )
@@ -197,8 +207,11 @@ fun DetailScreen(
                 Row(Modifier.fillMaxWidth()) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = article.author, fontSize = 12.sp, fontWeight = FontWeight.W700,
-                            color = Jennifer, modifier = Modifier
+                            text = uiState.value.article?.author.orEmpty(),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.W700,
+                            color = Jennifer,
+                            modifier = Modifier
                                 .align(
                                     Alignment.TopEnd
                                 )
@@ -209,14 +222,14 @@ fun DetailScreen(
                 }
                 Spacer(modifier = Modifier.height(11.dp))
                 Text(
-                    text = article.content,
+                    text = uiState.value.article?.content.orEmpty(),
                     Modifier.padding(start = 37.dp, end = 34.dp),
                     fontWeight = FontWeight.W700,
                     fontSize = 15.sp, maxLines = 5, overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = article.description,
+                    text = uiState.value.article?.description.orEmpty(),
                     Modifier.padding(start = 33.dp, end = 34.dp),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.W500, maxLines = 9, overflow = TextOverflow.Ellipsis
